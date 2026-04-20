@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Placement Predictor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="page">
+        <header class="hero">
+            <div class="hero-text">
+                <span class="pill">Machine Learning Project</span>
+                <h1>Student Placement Prediction</h1>
+                <p>
+                    This website uses a real Logistic Regression model trained on student-profile data
+                    to predict whether a student is likely to be placed.
+                </p>
+            </div>
+            <div class="hero-card">
+                <h3>Model Details</h3>
+                <ul>
+                    <li>Algorithm: Logistic Regression</li>
+                    <li>Type: Binary Classification</li>
+                    <li>Target: Placed / Not Placed</li>
+                    <li>Backend: Flask + scikit-learn</li>
+                </ul>
+            </div>
+        </header>
+
+        <main class="grid">
+            <section class="card">
+                <h2>Enter Student Details</h2>
+                <form id="predictionForm">
+                    <div class="form-grid">
+                        <div>
+                            <label>CGPA</label>
+                            <input type="number" id="cgpa" step="0.01" min="0" max="10" value="8.1" required>
+                        </div>
+                        <div>
+                            <label>Aptitude Score</label>
+                            <input type="number" id="aptitude" min="0" max="100" value="76" required>
+                        </div>
+                        <div>
+                            <label>Communication Score</label>
+                            <input type="number" id="communication" min="0" max="100" value="79" required>
+                        </div>
+                        <div>
+                            <label>Internship</label>
+                            <select id="internship" required>
+                                <option value="1">Yes</option>
+                                <option value="0">No</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Projects</label>
+                            <input type="number" id="projects" min="0" max="10" value="3" required>
+                        </div>
+                        <div>
+                            <label>Backlogs</label>
+                            <input type="number" id="backlogs" min="0" max="10" value="0" required>
+                        </div>
+                        <div>
+                            <label>Certifications</label>
+                            <input type="number" id="certifications" min="0" max="15" value="2" required>
+                        </div>
+                    </div>
+                    <button type="submit">Predict Placement</button>
+                </form>
+            </section>
+
+            <section class="card result-card">
+                <h2>Prediction Result</h2>
+                <div id="result" class="result-placeholder">
+                    Fill the form and click predict.
+                </div>
+                <div class="meter-wrap">
+                    <div class="meter-labels">
+                        <span>0%</span>
+                        <span>Placement chance</span>
+                        <span>100%</span>
+                    </div>
+                    <div class="meter">
+                        <div class="meter-fill" id="meterFill"></div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <section class="card info-card">
+            <h2>How it works</h2>
+            <div class="steps">
+                <div class="step">
+                    <h3>1. Input Features</h3>
+                    <p>CGPA, aptitude, communication, internship, projects, backlogs, and certifications are taken as inputs.</p>
+                </div>
+                <div class="step">
+                    <h3>2. ML Model</h3>
+                    <p>The Flask backend sends the values to a trained scikit-learn Logistic Regression model.</p>
+                </div>
+                <div class="step">
+                    <h3>3. Prediction</h3>
+                    <p>The model returns a probability and final class: <strong>Placed</strong> or <strong>Not Placed</strong>.</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        const form = document.getElementById('predictionForm');
+        const result = document.getElementById('result');
+        const meterFill = document.getElementById('meterFill');
+
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const payload = {
+                cgpa: document.getElementById('cgpa').value,
+                aptitude: document.getElementById('aptitude').value,
+                communication: document.getElementById('communication').value,
+                internship: document.getElementById('internship').value,
+                projects: document.getElementById('projects').value,
+                backlogs: document.getElementById('backlogs').value,
+                certifications: document.getElementById('certifications').value
+            };
+
+            result.innerHTML = "Predicting...";
+            meterFill.style.width = "0%";
+
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    result.innerHTML = `<span class="bad">Error:</span> ${data.error}`;
+                    return;
+                }
+
+                const good = data.prediction === "Placed";
+                result.innerHTML = `
+                    <div class="result-box">
+                        <div class="status ${good ? 'good' : 'bad'}">${data.prediction}</div>
+                        <p><strong>Placement Probability:</strong> ${data.probability}%</p>
+                    </div>
+                `;
+                meterFill.style.width = `${data.probability}%`;
+            } catch (error) {
+                result.innerHTML = `<span class="bad">Error:</span> Could not connect to server.`;
+            }
+        });
+    </script>
+</body>
+</html>
