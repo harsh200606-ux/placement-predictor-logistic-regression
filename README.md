@@ -1,41 +1,50 @@
-# Student Placement ML Website
+# 🎓 Student Placement Prediction using Machine Learning
 
-A full working machine learning website using:
+A full-stack Machine Learning web application that predicts whether a student will be placed or not based on academic and skill-related features.
 
-- Flask
-- scikit-learn
-- Logistic Regression
-- HTML/CSS/JavaScript
+---
 
-## Project files
+## 🚀 Live Features
 
-- `app.py` -> Flask backend
-- `placement_model.pkl` -> trained real ML model
-- `student_placement_data.csv` -> dataset used for training
-- `templates/index.html` -> frontend
-- `static/style.css` -> styles
+- 📊 Predict placement using Logistic Regression
+- 🌐 Interactive web interface (HTML, CSS, JavaScript)
+- ⚡ Fast backend using Flask
+- 📈 Displays probability of placement
+- 🎯 Real trained ML model (91% accuracy)
 
-## Run locally
+---
 
-```bash
-pip install -r requirements.txt
-python app.py
-```
+## 🧠 Machine Learning Model
 
-Then open the local address shown in the terminal.
+- **Algorithm:** Logistic Regression  
+- **Type:** Binary Classification  
+- **Output:** Placed / Not Placed  
 
-## Model info
+### 📐 Formula
 
-This project uses a real Logistic Regression model trained on the included dataset.
+P(Y=1) = 1 / (1 + e^-(b0 + b1x1 + b2x2 + ... + bnxn))
 
-Test accuracy on held-out data: 91.00%
+---
 
-## Input fields
+## 📊 Input Features
 
-- CGPA
-- Aptitude Score
-- Communication Score
-- Internship
-- Projects
-- Backlogs
-- Certifications
+- CGPA  
+- Aptitude Score  
+- Communication Score  
+- Internship (Yes/No)  
+- Projects  
+- Backlogs  
+- Certifications  
+
+---
+
+## 🛠️ Tech Stack
+
+- **Frontend:** HTML, CSS, JavaScript  
+- **Backend:** Flask (Python)  
+- **ML Library:** scikit-learn  
+- **Data Processing:** pandas, numpy  
+
+---
+
+## 📁 Project Structure
